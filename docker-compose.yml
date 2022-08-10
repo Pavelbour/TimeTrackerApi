@@ -1,0 +1,44 @@
+services:
+  api:
+    build:
+      args:
+        user: tta-user
+        uid: 1000
+      context: .
+      dockerfile: ./Dockerfile
+    image: tta-image
+    container_name: tta-container
+    restart: unless-stopped
+    working_dir: /var/www/
+    env_file:
+      - .env
+    ports:
+      - 6001:6001
+    volumes:
+      - ./:/var/www/
+    networks:
+      - tta-network
+
+  db:
+    image: postgres
+    container_name: tta-db-container
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - tta-network
+
+  nginx:
+    image: nginx
+    container_name: tta-nginx-container
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www
+      - ./.docker/nginx:/etc/nginx/conf.d
+    networks:
+      - tta-network
+
+networks:
+  tta-network:
