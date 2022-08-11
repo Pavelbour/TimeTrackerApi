@@ -4,7 +4,15 @@ namespace app\models;
 
 class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
 {
+    const ROLE_USER = 'user';
+    const ROLE_ADMIN = 'admin';
+
+    const SCENARIO_LOGIN = 'login';
+    const SCENARIO_REGISTER = 'register';
+    const SCENARIO_CHANGE_ROLE = 'change_role';
+
     public $id;
+    public $role;
     public $username;
     public $password;
     public $authKey;
@@ -100,5 +108,35 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return $this->password === $password;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function scenarios(): array
+    {
+        return [
+            self::SCENARIO_LOGIN => ['username', 'password'],
+            self::SCENARIO_REGISTER => ['username', 'password'],
+            self::SCENARIO_CHANGE_ROLE => ['username', 'password', 'role'],
+        ];
+    }
+
+    public function rules(): array
+    {
+        return [
+            [['username', 'password'], 'required', 'on' => self::SCENARIO_LOGIN],
+            [['username', 'password'], 'required', 'on' => self::SCENARIO_REGISTER],
+            [['username', 'password', 'role'], 'required', 'on' => self::SCENARIO_CHANGE_ROLE],
+            [['username', 'password'], 'string'],
+            [['role'], 'match', 'pattern' => 'user|admin'],
+        ];
     }
 }

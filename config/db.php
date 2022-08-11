@@ -1,10 +1,14 @@
 <?php
 
+$dbName = getenv('POSTGRES_DB');
+$dbUser = getenv('POSTGRES_USER');
+$dbPassword = getenv('POSTGRES_PASSWORD');
+
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '',
+    'dsn' => "pgsql:host=db;dbname=$dbName",
+    'username' => $dbUser,
+    'password' => $dbPassword,
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)
